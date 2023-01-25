@@ -2,6 +2,6 @@
 {
     public interface IBackgroundTaskManager
     {
-        Task<UploadStatus> GetTaskStatusAsync(string taskId);
+        Task<BackgroundTaskResult> GetTaskStatusAsync(string taskId);
     }
 }

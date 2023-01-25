@@ -1,11 +1,13 @@
-﻿using FWClient.Core;
+﻿using System;
+using System.Threading.Tasks;
+using Download.Crawl;
+using Download.FileManager;
+using FWClient.Core;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Threading.Tasks;
 
-namespace DownloadAPI
+namespace Download
 {
     internal class Program
     {
@@ -26,8 +28,10 @@ namespace DownloadAPI
                        httpClient.BaseAddress = new Uri(configuration.GetValue<string>("ApiBaseAddress"));
                    });
 
-                   services.AddTransient<DownloadAPIApplication>();
+                   services.AddTransient<DownloadAPISample>();
                    services.AddSingleton<IConfiguration>(configuration);
+                   services.AddScoped<IFileManager, FileManager.FileManager>();
+                   services.AddScoped<ICrawlService, CrawlService>();
                }).UseConsoleLifetime();
 
             var host = builder.Build();
@@ -38,14 +42,14 @@ namespace DownloadAPI
 
                 try
                 {
-                    var downloadApiApplication = services.GetRequiredService<DownloadAPIApplication>();
+                    var downloadApiApplication = services.GetRequiredService<DownloadAPISample>();
                     var result = await downloadApiApplication.Run();
 
                     Console.WriteLine(result);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("An error occured. " + ex.Message);
+                    Console.WriteLine("An error occurred. " + ex.Message);
                 }
             }
         }

@@ -1,24 +1,20 @@
-﻿using FWClient.Core.Renditions;
+﻿using FWClient.Core.BackgroundTasks.ResultFactory;
+using FWClient.Core.Common;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace FWClient.Core.BackgroundTasks
 {
-    internal class BackgroundTaskManager : IBackgroundTaskManager
+    internal class BackgroundTaskManager : GenericFwManager<BackgroundTaskManager>, IBackgroundTaskManager
     {
-        public const string ApiPath = "me/background-tasks/";
-        
-        private readonly ILogger<RenditionManager> _logger;
+        private readonly IBackgroundTaskResultFactory _backgroundTaskResultFactory;
+        public const string ApiPath = "fotoweb/me/background-tasks/";
 
-        private readonly HttpClient _httpClient;
-
-        public BackgroundTaskManager(ILogger<RenditionManager> logger, IHttpClientFactory clientFactory)
+        public BackgroundTaskManager(ILogger<BackgroundTaskManager> logger, IHttpClientFactory clientFactory, IBackgroundTaskResultFactory backgroundTaskResultFactory) : base(logger, clientFactory)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            _httpClient = clientFactory.CreateClient(DependencyInjection.FwHttpClient);
+            _backgroundTaskResultFactory = backgroundTaskResultFactory ?? throw new ArgumentNullException(nameof(backgroundTaskResultFactory));
         }
 
-        public async Task<UploadStatus> GetTaskStatusAsync(string taskId)
+        public async Task<BackgroundTaskResult> GetTaskStatusAsync(string taskId)
         {
             using var requestData = new HttpRequestMessage
             {
@@ -27,11 +23,11 @@ namespace FWClient.Core.BackgroundTasks
             };
 
             // ToDo: Consider setting different headers.
-            ////requestData.Headers.TryAddWithoutValidation("Accept", "application/vnd.fotoware.rendition-response+json");
+            requestData.Headers.TryAddWithoutValidation("Accept", "application/vnd.fotoware.rendition-response+json");
 
-            var response = await _httpClient.SendAsync(requestData);
+            var response = await HttpClient.SendAsync(requestData);
 
-            var result = JsonConvert.DeserializeObject<UploadStatus>(await response.Content.ReadAsStringAsync());
+            var result = await _backgroundTaskResultFactory.GetTaskResultAsync(response);
 
             return result;
         }

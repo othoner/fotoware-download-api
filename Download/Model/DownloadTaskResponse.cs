@@ -1,4 +1,4 @@
-﻿namespace DownloadAPI.Model
+﻿namespace Download.Model
 {
     public class DownloadTaskResponse
     {

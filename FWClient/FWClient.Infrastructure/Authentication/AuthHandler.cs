@@ -15,7 +15,7 @@ namespace FWClient.Core.Authentication
         {
             var token = await _tokenProvider.GetTokenAsync();
 
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.AccessToken);
+            request.Headers.Authorization = new AuthenticationHeaderValue(token.TokenType, token.AccessToken);
 
             return await base.SendAsync(request, cancellationToken);
         }

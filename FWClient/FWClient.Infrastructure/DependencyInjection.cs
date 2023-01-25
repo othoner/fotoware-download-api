@@ -2,6 +2,7 @@
 using FWClient.Core.Archive;
 using FWClient.Core.Authentication;
 using FWClient.Core.BackgroundTasks;
+using FWClient.Core.BackgroundTasks.ResultFactory;
 using FWClient.Core.Configuration;
 using FWClient.Core.Renditions;
 using FWClient.Core.Tracing;
@@ -38,6 +39,7 @@ namespace FWClient.Core
             services.AddScoped<IRenditionManager, RenditionManager>();
             services.AddScoped<IBackgroundTaskManager, BackgroundTaskManager>();
             services.AddScoped<IArchiveManager, ArchiveManager>();
+            services.AddScoped<IBackgroundTaskResultFactory, BackgroundTaskResultFactory>();
 
             return services;
         }

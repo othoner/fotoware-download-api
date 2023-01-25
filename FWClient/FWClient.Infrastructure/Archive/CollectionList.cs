@@ -2,13 +2,14 @@
 
 namespace FWClient.Core.Archive
 {
-    public class CollectionList
+    public class CollectionList<T>
+    where T : CollectionItemBase
     {
         [JsonProperty("searchURL")]
         public string? SearchURL { get; set; }
 
         [JsonProperty("data")]
-        public List<TaxonomyItemInfo> Data { get; set; }
+        public List<T> Data { get; set; }
 
         [JsonProperty("paging")]
         public PagingInfo? Paging { get; set; }

@@ -7,7 +7,7 @@ namespace FWClient.Core.Renditions
 {
     internal class RenditionManager : GenericFwManager<RenditionManager>, IRenditionManager
     {
-        private const string ApiPath = "services/renditions";
+        private const string ApiPath = "fotoweb/services/renditions";
 
         public RenditionManager(ILogger<RenditionManager> logger, IHttpClientFactory clientFactory) : base(logger, clientFactory)
         {

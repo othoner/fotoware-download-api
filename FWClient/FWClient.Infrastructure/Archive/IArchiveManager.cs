@@ -2,6 +2,8 @@
 {
     public interface IArchiveManager
     {
-        Task<CollectionList> GetAll(string? query = null);
+        Task<ArchiveCollectionList> GetAll(string? query = null);
+        Task<ArchiveDetails> GeyByIdAsync(string id);
+        Task<ArchiveDetails> GeyByTaxonomyAsync(TaxonomyItemInfo taxonomyItemInfo);
     }
 }
