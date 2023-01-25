@@ -1,0 +1,34 @@
+﻿namespace FWClient.Core.Archive
+{
+    public enum Permissions
+    {
+        View,
+        Preview,
+        Download,
+        EditText,
+        CropRotate,
+        Delete,
+        Comping,
+        TrdParty1,
+        TrdParty2,
+        TrdParty3,
+        TrdParty4,
+        Alert,
+        CopyTo,
+        MoveTo,
+        CopyFrom,
+        MoveFrom,
+        Rename,
+        OpenFile,
+        EditFile,
+        CropFile,
+        UploadFile,
+        FwdtPlace,
+        Export,
+        Comment,
+        Remove,
+        Reorder,
+        SetPosterAsset,
+        Add
+    }
+}
