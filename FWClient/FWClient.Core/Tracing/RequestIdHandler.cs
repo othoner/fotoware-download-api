@@ -37,7 +37,7 @@ namespace FWClient.Core.Tracing
 
             return "Could not find request id";
         }
-        
+
         private static string GetFotoWebServer(HttpResponseMessage responseMessage)
         {
             if (responseMessage.Headers.TryGetValues(FotoWebServerHeaderName, out var headers))

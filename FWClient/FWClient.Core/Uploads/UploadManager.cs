@@ -1,8 +1,8 @@
-﻿using FWClient.Core.Common;
+﻿using System.Net.Http.Headers;
+using System.Text;
+using FWClient.Core.Common;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System.Net.Http.Headers;
-using System.Text;
 
 namespace FWClient.Core.Uploads
 {
@@ -60,8 +60,7 @@ namespace FWClient.Core.Uploads
                     }
 
                     // do work on buffer...
-
-                    await SendChunkAsync(boundary, buffer, chunkIterator, uploadId);
+                    await UploadChunkAsync(boundary, buffer, chunkIterator, uploadId);
 
                     bytesRead += bytesReadToBuffer;
                     bytesToRead -= bytesReadToBuffer;
@@ -69,10 +68,8 @@ namespace FWClient.Core.Uploads
             }
         }
 
-        private async Task SendChunkAsync(string boundary, byte[] buffer, int chunkIterator, string uploadId)
+        private async Task UploadChunkAsync(string boundary, byte[] buffer, int chunkIterator, string uploadId)
         {
-            // uploading chunk ....
-
             using var formDataStream = new MemoryStream();
             string header = $"--{boundary}\r\nContent-Disposition: form-data; name=\"chunk\"; filename=\"chunk\"\r\nContent-Type: application/octet-stream\r\n\r\n";
             formDataStream.Write(Encoding.ASCII.GetBytes(header), 0, Encoding.ASCII.GetByteCount(header));

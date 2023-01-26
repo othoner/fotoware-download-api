@@ -1,7 +1,9 @@
-﻿namespace FWClient.Core.BackgroundTasks;
-
-public class RequestedTaskInfo
+﻿namespace FWClient.Core.BackgroundTasks
 {
-    public TaskType Type { get; set; }
-    public string? TaskId { get; set; }
+    public class RequestedTaskInfo
+    {
+        public TaskType Type { get; set; }
+
+        public string? TaskId { get; set; }
+    }
 }

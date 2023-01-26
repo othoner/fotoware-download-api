@@ -13,6 +13,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "FWClient", "FWClient", "{8C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FWClient.Core", "FWClient\FWClient.Core\FWClient.Core.csproj", "{E4AEFAAF-6D19-45B4-A61A-B6588BB16661}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StyleCop", "StyleCop", "{EF12AA82-0F34-4F9A-9F8B-A8D153F009D9}"
+	ProjectSection(SolutionItems) = preProject
+		Code Analysis\stylecop.json = Code Analysis\stylecop.json
+		Code Analysis\StyleCop.ruleset = Code Analysis\StyleCop.ruleset
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

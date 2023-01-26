@@ -1,15 +1,20 @@
-﻿namespace FWClient.Core.BackgroundTasks.RequestBuilder;
-
-internal class RenditionRequestModifier : IRequestModifier
+﻿namespace FWClient.Core.BackgroundTasks.RequestBuilder
 {
-    public void Modify(RequestedTaskInfo taskInfo, HttpRequestMessage requestMessage)
+    /// <summary>
+    /// Modify http request to get rendition task status.
+    /// </summary>
+    internal class RenditionRequestModifier : IRequestModifier
     {
-        if (taskInfo.Type != TaskType.RenditionResponse)
+        /// <inheritdoc />
+        public void Modify(RequestedTaskInfo taskInfo, HttpRequestMessage requestMessage)
         {
-            return;
-        }
+            if (taskInfo.Type != TaskType.RenditionResponse)
+            {
+                return;
+            }
 
-        requestMessage.RequestUri = new Uri(Path.Combine(BackgroundTaskManager.ApiPath, taskInfo.TaskId), UriKind.Relative);
-        requestMessage.Headers.Add("Accept", "application/vnd.fotoware.rendition-response+json");
+            requestMessage.RequestUri = new Uri(Path.Combine(BackgroundTaskManager.ApiPath, taskInfo.TaskId), UriKind.Relative);
+            requestMessage.Headers.Add("Accept", "application/vnd.fotoware.rendition-response+json");
+        }
     }
 }

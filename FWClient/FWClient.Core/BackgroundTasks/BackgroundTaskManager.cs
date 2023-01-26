@@ -7,7 +7,7 @@ namespace FWClient.Core.BackgroundTasks
     internal class BackgroundTaskManager : GenericFwManager<BackgroundTaskManager>, IBackgroundTaskManager
     {
         public const string ApiPath = "/fotoweb/me/background-tasks/";
-        
+
         private readonly IBackgroundTaskRequestBuilder _requestBuilder;
         private readonly IBackgroundTaskResultFactory _backgroundTaskResultFactory;
 
@@ -15,8 +15,8 @@ namespace FWClient.Core.BackgroundTasks
             ILogger<BackgroundTaskManager> logger,
             IHttpClientFactory clientFactory,
             IBackgroundTaskRequestBuilder requestBuilder,
-            IBackgroundTaskResultFactory backgroundTaskResultFactory) :
-            base(logger, clientFactory)
+            IBackgroundTaskResultFactory backgroundTaskResultFactory)
+            : base(logger, clientFactory)
         {
             _requestBuilder = requestBuilder ?? throw new ArgumentNullException(nameof(requestBuilder));
             _backgroundTaskResultFactory = backgroundTaskResultFactory ?? throw new ArgumentNullException(nameof(backgroundTaskResultFactory));

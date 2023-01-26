@@ -6,7 +6,7 @@ namespace FWClient.Core.Assets
     public class Asset : CollectionItemBase
     {
         [JsonProperty("archiveHREF")]
-        public string ArchiveHREF { get; set; }
+        public string ArchiveHref { get; set; }
 
         [JsonProperty("archiveId")]
         public int ArchiveId { get; set; }

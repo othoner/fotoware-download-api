@@ -1,27 +1,28 @@
 ﻿using FWClient.Core.BackgroundTasks.ResultFactory;
 
-namespace FWClient.Core.BackgroundTasks.RequestBuilder;
-
-internal class BackgroundTaskRequestBuilder : IBackgroundTaskRequestBuilder
+namespace FWClient.Core.BackgroundTasks.RequestBuilder
 {
-    private readonly List<IRequestModifier> Modifiers = new ()
+    internal class BackgroundTaskRequestBuilder : IBackgroundTaskRequestBuilder
     {
-        new GetUploadStatusRequestModifier(),
-        new RenditionRequestModifier()
-    };
-
-    public HttpRequestMessage GenerateRequest(RequestedTaskInfo taskInfo)
-    {
-        var request = new HttpRequestMessage
+        private readonly List<IRequestModifier> _modifiers = new ()
         {
-            Method = HttpMethod.Get
+            new GetUploadStatusRequestModifier(),
+            new RenditionRequestModifier()
         };
 
-        foreach (var modifier in Modifiers)
+        public HttpRequestMessage GenerateRequest(RequestedTaskInfo taskInfo)
         {
-            modifier.Modify(taskInfo, request);
-        }
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get
+            };
 
-        return request;
+            foreach (var modifier in _modifiers)
+            {
+                modifier.Modify(taskInfo, request);
+            }
+
+            return request;
+        }
     }
 }

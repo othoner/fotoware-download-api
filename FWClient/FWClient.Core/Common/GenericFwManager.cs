@@ -5,6 +5,7 @@ namespace FWClient.Core.Common
     internal abstract class GenericFwManager<T>
     {
         protected ILogger<T> Logger { get; }
+
         protected HttpClient HttpClient { get; }
 
         public GenericFwManager(ILogger<T> logger, IHttpClientFactory clientFactory)

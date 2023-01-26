@@ -14,13 +14,28 @@ using Microsoft.Extensions.Options;
 
 namespace FWClient.Core
 {
+    /// <summary>
+    /// Extension methods for adding services to an <see cref="IServiceCollection" />.
+    /// </summary>
     public static class DependencyInjection
     {
+        /// <summary>
+        /// FotoWeb HTTP client name.
+        /// </summary>
         internal const string FwHttpClient = "FwHttpClient";
         private const string ApiSectionName = "FotoWeb";
 
+        /// <summary>
+        /// Registers FotoWeb services.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="configuration">Configuration.</param>
+        /// <returns>A reference to this instance after the operation has completed.</returns>
+        /// <exception cref="ArgumentNullException">Thrown if configuration is not provided.</exception>
         public static IServiceCollection AddFotoWebServices(this IServiceCollection services, IConfiguration configuration)
         {
+            _ = configuration ?? throw new ArgumentNullException(nameof(configuration));
+
             services.Configure<FotoWebConfigs>(configuration.GetSection(ApiSectionName));
             services.AddScoped<ITokenProvider, TokenProvider>();
             services.AddScoped<AuthHandler>();

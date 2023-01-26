@@ -8,9 +8,8 @@ namespace Upload
 {
     internal class Program
     {
-        static async Task<int> Main(string[] args)
+        private static async Task<int> Main(string[] args)
         {
-
             var configuration = new ConfigurationBuilder()
                 .AddCommandLine(args)
                 .AddJsonFile("appsettings.json")
@@ -19,21 +18,14 @@ namespace Upload
             var builder = new HostBuilder()
                .ConfigureServices((hostContext, services) =>
                {
+                   // Register FotoWeb services.
                    services.AddFotoWebServices(configuration);
 
-                   services.AddTransient<UploadAPISample>();
+                   services.AddTransient<UploadApiSample>();
 
                    services.AddScoped<IInputHandler, InputHandler>();
                    services.AddSingleton<IConfiguration>(configuration);
                }).UseConsoleLifetime();
-
-            /*
-            builder.ConfigureLogging(logging =>
-            {
-                logging.ClearProviders();
-                logging.AddConsole();
-            });
-            */
 
             var host = builder.Build();
 
@@ -43,7 +35,7 @@ namespace Upload
 
                 try
                 {
-                    var uploadApiApplication = services.GetRequiredService<UploadAPISample>();
+                    var uploadApiApplication = services.GetRequiredService<UploadApiSample>();
                     var result = await uploadApiApplication.Run();
 
                     Console.WriteLine(result);

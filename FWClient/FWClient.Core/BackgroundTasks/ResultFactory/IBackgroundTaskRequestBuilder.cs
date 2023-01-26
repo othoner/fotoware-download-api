@@ -1,6 +1,7 @@
-﻿namespace FWClient.Core.BackgroundTasks.ResultFactory;
-
-public interface IBackgroundTaskRequestBuilder
+﻿namespace FWClient.Core.BackgroundTasks.ResultFactory
 {
-    HttpRequestMessage GenerateRequest(RequestedTaskInfo taskInfo);
+    public interface IBackgroundTaskRequestBuilder
+    {
+        HttpRequestMessage GenerateRequest(RequestedTaskInfo taskInfo);
+    }
 }

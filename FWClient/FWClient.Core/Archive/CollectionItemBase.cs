@@ -20,7 +20,7 @@ namespace FWClient.Core.Archive
         public string SearchString { get; set; }
 
         [JsonProperty("searchURL")]
-        public string SearchURL { get; set; }
+        public string SearchUrl { get; set; }
 
         [JsonProperty("type")]
         public string Type { get; set; }

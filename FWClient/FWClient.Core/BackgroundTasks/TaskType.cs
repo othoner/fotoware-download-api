@@ -1,7 +1,8 @@
-﻿namespace FWClient.Core.BackgroundTasks;
-
-public enum TaskType
+﻿namespace FWClient.Core.BackgroundTasks
 {
-    RenditionResponse,
-    UploadStatus
+    public enum TaskType
+    {
+        RenditionResponse,
+        UploadStatus
+    }
 }

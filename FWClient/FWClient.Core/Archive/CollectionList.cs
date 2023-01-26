@@ -6,7 +6,7 @@ namespace FWClient.Core.Archive
     where T : CollectionItemBase
     {
         [JsonProperty("searchURL")]
-        public string? SearchURL { get; set; }
+        public string? SearchUrl { get; set; }
 
         [JsonProperty("data")]
         public List<T> Data { get; set; }

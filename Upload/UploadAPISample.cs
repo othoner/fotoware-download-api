@@ -6,35 +6,54 @@ using Task = System.Threading.Tasks.Task;
 
 namespace Upload
 {
-    internal class UploadAPISample
+    /// <summary>
+    /// Upload asset sample.
+    /// </summary>
+    internal class UploadApiSample
     {
         private readonly ILogger _logger;
         private readonly IUploadManager _uploadManager;
         private readonly IInputHandler _inputHandler;
         private readonly IBackgroundTaskManager _backgroundTaskManager;
 
-        public UploadAPISample(ILogger<UploadAPISample> logger, IUploadManager uploadManager, IInputHandler inputHandler, IBackgroundTaskManager backgroundTaskManager)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UploadApiSample"/> class.
+        /// </summary>
+        /// <param name="logger">Logger instance.</param>
+        /// <param name="uploadManager"><see cref="IUploadManager"/> instance.</param>
+        /// <param name="inputHandler"><see cref="IInputHandler"/> instance.</param>
+        /// <param name="backgroundTaskManager"><see cref="IBackgroundTaskManager"/> instance.</param>
+        public UploadApiSample(
+            ILogger<UploadApiSample> logger,
+            IUploadManager uploadManager,
+            IInputHandler inputHandler,
+            IBackgroundTaskManager backgroundTaskManager)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this._uploadManager = uploadManager ?? throw new ArgumentNullException(nameof(uploadManager));
-            this._inputHandler = inputHandler ?? throw new ArgumentNullException(nameof(inputHandler));
-            this._backgroundTaskManager = backgroundTaskManager ?? throw new ArgumentNullException(nameof(backgroundTaskManager));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _uploadManager = uploadManager ?? throw new ArgumentNullException(nameof(uploadManager));
+            _inputHandler = inputHandler ?? throw new ArgumentNullException(nameof(inputHandler));
+            _backgroundTaskManager = backgroundTaskManager ?? throw new ArgumentNullException(nameof(backgroundTaskManager));
         }
 
+        /// <summary>
+        /// Upload asset to archive.
+        /// </summary>
+        /// <returns>Action result.</returns>
         public async Task<string> Run()
         {
-            this._logger.LogInformation("Application {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
+            _logger.LogInformation("Application {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
 
             try
             {
-                var uploadDetails = this._inputHandler.GetInputFromUser();
+                // Get upload details.
+                var uploadDetails = _inputHandler.GetInputFromUser();
 
                 var fileLength = new FileInfo(uploadDetails.FullFilePath).Length;
                 var uploadTaskRequest = new UploadTaskRequest
                 {
                     Destination = uploadDetails.Desitnation,
                     Folder = uploadDetails.Folder,
-                    FileName = Path.GetFileName(uploadDetails.FullFilePath), //fileName,
+                    FileName = Path.GetFileName(uploadDetails.FullFilePath),
                     FileSize = fileLength,
                     CheckoutId = null,
                     HasXmp = false,
@@ -50,7 +69,8 @@ namespace Upload
                     Comment = uploadDetails.Comment
                 };
 
-                var uploadTaskResponse = await this._uploadManager.CreateUploadTaskAsync(uploadTaskRequest);
+                // Register upload task.
+                var uploadTaskResponse = await _uploadManager.CreateUploadTaskAsync(uploadTaskRequest);
 
                 var requestedTaskInfo = new RequestedTaskInfo
                 {
@@ -58,9 +78,13 @@ namespace Upload
                     Type = TaskType.UploadStatus
                 };
 
-                var fileUploadTask = this._uploadManager.UploadFileAsync(uploadDetails.FullFilePath, uploadTaskResponse.ChunkSize, uploadTaskResponse.Id);
-                var trackTaskStatus = this.TrackTaskStatus(requestedTaskInfo);
+                // Upload file as chunks async.
+                var fileUploadTask = _uploadManager.UploadFileAsync(uploadDetails.FullFilePath, uploadTaskResponse.ChunkSize, uploadTaskResponse.Id);
 
+                // Start track status task.
+                var trackTaskStatus = TrackTaskStatus(requestedTaskInfo);
+
+                // Wait until file is uploaded.
                 await Task.WhenAll(fileUploadTask, trackTaskStatus);
 
                 if (trackTaskStatus.Result == null)
@@ -75,7 +99,7 @@ namespace Upload
                 return $"Something went wrong: {ex.Message}";
             }
 
-            this._logger.LogInformation("Application {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
+            _logger.LogInformation("Application {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
 
             return "Success";
         }
@@ -85,7 +109,7 @@ namespace Upload
             UploadStatus uploadStatus;
             do
             {
-                var taskResult = await this._backgroundTaskManager.GetTaskStatusAsync(requestedTaskInfo);
+                var taskResult = await _backgroundTaskManager.GetTaskStatusAsync(requestedTaskInfo);
                 if (taskResult.Status != BackgroundTaskStatus.UploadStatus)
                 {
                     return null;
@@ -93,10 +117,13 @@ namespace Upload
 
                 uploadStatus = ((UploadTaskStatusResult)taskResult).UploadStatus;
 
-                Console.WriteLine(uploadStatus.Task.Status == UploadingTaskStatuses.AwaitingData ? "Awaiting Data...." : "Uploading....");
+                Console.WriteLine(uploadStatus.Task.Status == UploadingTaskStatuses.AwaitingData
+                    ? "Awaiting Data...."
+                    : "Uploading....");
 
                 await Task.Delay(TimeSpan.FromMilliseconds(uploadStatus.Job.Updates?.Frequency ?? 1000));
-            } while (uploadStatus.Task.Status != UploadingTaskStatuses.Done &&
+            }
+            while (uploadStatus.Task.Status != UploadingTaskStatuses.Done &&
                      uploadStatus.Task.Status != UploadingTaskStatuses.Failed);
 
             return uploadStatus;

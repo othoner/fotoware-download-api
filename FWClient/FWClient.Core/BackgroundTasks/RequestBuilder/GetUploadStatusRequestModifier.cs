@@ -1,15 +1,20 @@
-﻿namespace FWClient.Core.BackgroundTasks.RequestBuilder;
-
-internal class GetUploadStatusRequestModifier : IRequestModifier
+﻿namespace FWClient.Core.BackgroundTasks.RequestBuilder
 {
-    public void Modify(RequestedTaskInfo taskInfo, HttpRequestMessage requestMessage)
+    /// <summary>
+    /// Modify http request to get upload task status.
+    /// </summary>
+    internal class GetUploadStatusRequestModifier : IRequestModifier
     {
-        if (taskInfo.Type != TaskType.UploadStatus)
+        /// <inheritdoc />
+        public void Modify(RequestedTaskInfo taskInfo, HttpRequestMessage requestMessage)
         {
-            return;
-        }
+            if (taskInfo.Type != TaskType.UploadStatus)
+            {
+                return;
+            }
 
-        requestMessage.RequestUri = new Uri(Path.Combine(BackgroundTaskManager.ApiPath, taskInfo.TaskId), UriKind.Relative);
-        requestMessage.Headers.Add("Accept", "application/vnd.fotoware.upload-status+json");
+            requestMessage.RequestUri = new Uri(Path.Combine(BackgroundTaskManager.ApiPath, taskInfo.TaskId), UriKind.Relative);
+            requestMessage.Headers.Add("Accept", "application/vnd.fotoware.upload-status+json");
+        }
     }
 }

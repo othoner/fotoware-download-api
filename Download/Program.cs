@@ -11,7 +11,7 @@ namespace Download
 {
     internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             var configuration = new ConfigurationBuilder()
                 .AddCommandLine(args)
@@ -21,9 +21,10 @@ namespace Download
             var builder = new HostBuilder()
                .ConfigureServices((hostContext, services) =>
                {
+                   // Register FotoWeb services.
                    services.AddFotoWebServices(configuration);
 
-                   services.AddTransient<DownloadAPISample>();
+                   services.AddTransient<DownloadApiSample>();
                    services.AddSingleton<IConfiguration>(configuration);
                    services.AddScoped<IFileManager, FileManager.FileManager>();
                    services.AddScoped<ICrawlService, CrawlService>();
@@ -37,7 +38,7 @@ namespace Download
 
                 try
                 {
-                    var downloadApiApplication = services.GetRequiredService<DownloadAPISample>();
+                    var downloadApiApplication = services.GetRequiredService<DownloadApiSample>();
                     var result = await downloadApiApplication.Run();
 
                     Console.WriteLine(result);
