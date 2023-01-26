@@ -23,11 +23,6 @@ namespace Download
                {
                    services.AddFotoWebServices(configuration);
 
-                   services.AddHttpClient("FotoWebApi", httpClient =>
-                   {
-                       httpClient.BaseAddress = new Uri(configuration.GetValue<string>("ApiBaseAddress"));
-                   });
-
                    services.AddTransient<DownloadAPISample>();
                    services.AddSingleton<IConfiguration>(configuration);
                    services.AddScoped<IFileManager, FileManager.FileManager>();

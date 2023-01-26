@@ -7,6 +7,7 @@ using Download.Crawl;
 using Download.FileManager;
 using FWClient.Core.BackgroundTasks;
 using FWClient.Core.Renditions;
+using FWClient.Core.Uploads;
 using Microsoft.Extensions.Logging;
 
 namespace Download
@@ -26,20 +27,20 @@ namespace Download
             ICrawlService crawlService,
             IFileManager fileManager)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this._renditionManager = renditionManager ?? throw new ArgumentNullException(nameof(renditionManager));
-            this._backgroundTaskManager = backgroundTaskManager ?? throw new ArgumentNullException(nameof(backgroundTaskManager));
-            this._crawlService = crawlService ?? throw new ArgumentNullException(nameof(crawlService));
-            this._fileManager = fileManager ?? throw new ArgumentNullException(nameof(fileManager));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _renditionManager = renditionManager ?? throw new ArgumentNullException(nameof(renditionManager));
+            _backgroundTaskManager = backgroundTaskManager ?? throw new ArgumentNullException(nameof(backgroundTaskManager));
+            _crawlService = crawlService ?? throw new ArgumentNullException(nameof(crawlService));
+            _fileManager = fileManager ?? throw new ArgumentNullException(nameof(fileManager));
         }
 
         public async Task<string> Run()
         {
-            this._logger.LogInformation("Application {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
+            _logger.LogInformation("Application {applicationEvent} at {dateTime}", "Started", DateTime.UtcNow);
 
             try
             {
-                var asset = await this._crawlService.FirstAvailableAssetAsync();
+                var asset = await _crawlService.FirstAvailableAssetAsync();
 
                 if (asset == null)
                 {
@@ -48,17 +49,23 @@ namespace Download
 
                 var assetRendition = asset.Renditions.First();
 
-                var downloadTaskDetails = await this._renditionManager.SubmitRenditionAsync(assetRendition.Href);
+                var downloadTaskDetails = await _renditionManager.SubmitRenditionAsync(assetRendition.Href);
+
+                var requestedTaskInfo = new RequestedTaskInfo
+                {
+                    TaskId = downloadTaskDetails.Href,
+                    Type = TaskType.UploadStatus
+                };
 
                 BackgroundTaskResult taskResult;
                 do
                 {
-                    taskResult = await this._backgroundTaskManager.GetTaskStatusAsync(downloadTaskDetails.Href);
+                    taskResult = await _backgroundTaskManager.GetTaskStatusAsync(requestedTaskInfo);
                 } while (taskResult.Status != BackgroundTaskStatus.ReadyToDownload);
 
                 var outputFilePath = Path.Combine(@"C:\temp\", asset.Filename);
 
-                await this._fileManager.SaveFileAsync(((AssetReadyToBeDownloadedResult)taskResult).Asset, outputFilePath);
+                await _fileManager.SaveFileAsync(((AssetReadyToBeDownloadedResult)taskResult).Asset, outputFilePath);
 
                 Console.WriteLine($"File downloaded by the next path: {outputFilePath}");
 
@@ -69,7 +76,7 @@ namespace Download
                 return $"Something went wrong: {ex.Message}";
             }
 
-            this._logger.LogInformation("Application {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
+            _logger.LogInformation("Application {applicationEvent} at {dateTime}", "Ended", DateTime.UtcNow);
 
             return "Success";
         }

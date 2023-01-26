@@ -1,8 +1,10 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FWClient.Core;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Upload.UserInput;
 
-namespace UploadAPI
+namespace Upload
 {
     internal class Program
     {
@@ -17,16 +19,11 @@ namespace UploadAPI
             var builder = new HostBuilder()
                .ConfigureServices((hostContext, services) =>
                {
-                   services.AddHttpClient("FotoWebApi", httpClient =>
-                   {
-                       httpClient.BaseAddress = new Uri(configuration.GetValue<string>("ApiBaseAddress"));
-                       httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
-                   });
-                   services.AddTransient<UploadAPIApplication>();
-                   services.AddScoped<IAuthentication, Authentication>();
-                   services.AddScoped<IUpload, Upload>();
+                   services.AddFotoWebServices(configuration);
+
+                   services.AddTransient<UploadAPISample>();
+
                    services.AddScoped<IInputHandler, InputHandler>();
-                   services.AddScoped<IRequestHandler, RequestHandler>();
                    services.AddSingleton<IConfiguration>(configuration);
                }).UseConsoleLifetime();
 
@@ -46,8 +43,8 @@ namespace UploadAPI
 
                 try
                 {
-                    var uploadApiApplication = services.GetRequiredService<UploadAPIApplication>();
-                    var result = uploadApiApplication.Run();
+                    var uploadApiApplication = services.GetRequiredService<UploadAPISample>();
+                    var result = await uploadApiApplication.Run();
 
                     Console.WriteLine(result);
                 }

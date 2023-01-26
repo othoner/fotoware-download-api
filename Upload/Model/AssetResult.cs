@@ -1,4 +1,4 @@
-﻿namespace UploadAPI.Model
+﻿namespace Upload.Model
 {
     public class AssetResult
     {
